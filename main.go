@@ -1,10 +1,11 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"strconv"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 )
@@ -15,10 +16,25 @@ func cotacaoTransportadoras(w http.ResponseWriter, r *http.Request) {
 	defer span.Finish()
 
 	// Append span info to log messages:
-	log.Printf("Iniciando cotação de transportadora em breve... %v", span)
+	//log.Info().Msg("Olá")
+	//log.Printf("Iniciando cotação de transportadora em breve... %v", span)
+
+	log.WithField("dd", span).Print("Iniciando cotação de transportadora em breve")
+	//log.Log().Interface("Iniciando cotação de transportadora em breve... %v", span)
+
 }
 
 func main() {
+
+	log.SetFormatter(&log.TextFormatter{
+		DisableColors: true,
+		FullTimestamp: true,
+	})
+
+	log.SetReportCaller(true)
+
+	log.SetFormatter(&log.JSONFormatter{})
+
 	tracer.Start(
 		tracer.WithEnv("yssy-demo"),
 		tracer.WithService("api-logistica"),
