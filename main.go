@@ -11,21 +11,19 @@ import (
 )
 
 func cotacaoTransportadoras(w http.ResponseWriter, r *http.Request) {
-	// Create a span for a web request at the /posts URL.
-	span := tracer.StartSpan("web.request", tracer.ResourceName("/quotar-transportadoras"))
+	sctx, err := tracer.Extract(tracer.HTTPHeadersCarrier(r.Header))
+
+	span := tracer.StartSpan("web.request", tracer.ResourceName("/quotar-transportadoras"), tracer.ChildOf(sctx))
 	defer span.Finish()
 
-	// Append span info to log messages:
-	//log.Info().Msg("Olá")
-	//log.Printf("Iniciando cotação de transportadora em breve... %v", span)
-
-	log.WithField("dd", span).Print("Iniciando cotação de transportadora em breve")
-	//log.Log().Interface("Iniciando cotação de transportadora em breve... %v", span)
+	if err != nil {
+		log.WithField("dd", span).Errorln(err)
+	}
+	log.WithField("dd", span).Println("Iniciando cotação de transportadora em breve")
 
 }
 
 func main() {
-
 	log.SetFormatter(&log.TextFormatter{
 		DisableColors: true,
 		FullTimestamp: true,
